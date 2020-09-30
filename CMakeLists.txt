@@ -179,7 +179,7 @@ add_executable(polar_sensor_models_node   src/PolarSensors.cpp
 #   ${catkin_LIBRARIES}
 # )
 
-target_link_libraries(sensormodelTest_node
+target_link_libraries(polar_sensor_models_node
 ${catkin_LIBRARIES}
 obvision
 obcore
