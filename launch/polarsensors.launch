@@ -1,26 +1,20 @@
 <?xml version="1.0"?>
 <launch>
 
-<!--  change this depending on which sensor you want to use -->
-<!-- 
-<arg name = "sensor_type_selected" default = "VLP16" />
-<arg name = "sensor_type_selected" default = "HDL32E" />
-<arg name = "sensor_type_selected" default = "OUSTEROS0" />
-<arg name = "sensor_type_selected" default = "TILT3D" />
-<arg name = "sensor_type_selected" default = "TILT4D" /> -->
+<!-- _________________________________________________________________________________ -->
+<!--  CHANGE THIS DEPENDING ON WHICH SENSOR YOU WANT TO USE (UNCOMMENT THE ONE U NEED) -->
+<!--                      wanna add a new sensor? pls check below                      -->
 
-<!-- try this or the group block -->
-<!-- <node pkg= "polar_sensor_models" 	type = "polar_sensor_models_node" name = "polar_sensor_models_node" output="screen" 
-if = "$(eval sensor_type_selected == 'VLP16')" /> -->
+<!-- <arg name = "sensor_type_selected" default = "VLP16" /> -->
+<!-- <arg name = "sensor_type_selected" default = "HDL32E" /> -->
+<!-- <arg name = "sensor_type_selected" default = "OUSTEROS0" /> -->
+<!-- <arg name = "sensor_type_selected" default = "TILT3D" /> -->
+<arg name = "sensor_type_selected" default = "TILT4D" />
 
-<!-- group block -->
-<!-- <group if= "$(eval arg('sensor_type_selected')==VLP16)">
-  <node pkg= "polar_sensor_models" 	type = "polar_sensor_models_node" name = "polar_sensor_models_node" output="screen" >
-    <param name="sensorType"  	type="string" value="VLP16"/>
-  </node>
-</group> -->
-
-<node pkg= "polar_sensor_models" 		type = "polar_sensor_models_node" 	name = "polar_sensor_models_node" 	output="screen" >
+<!-- ____________ -->
+<!--     VLP16    -->
+<!--   check scan topic  -->
+<node pkg= "polar_sensor_models" 		type = "polar_sensor_models_node" 	name = "polar_sensor_models_node" 	output="screen" if = "$(eval sensor_type_selected == 'VLP16')" >
 		<param name="sensorType"  		type="string" value="VLP16"/>
 		<param name="laserDataTopic"  	type="string" value="puck_rear/velodyne_points"/>
 		<param name="raysIncl"  		type="int" value="16"/> 				<!-- number of vertical rays  -->
@@ -33,4 +27,88 @@ if = "$(eval sensor_type_selected == 'VLP16')" /> -->
 <!-- TODO: add firingSeq with YAML file input -->
 </node>
 
+<!-- ____________ -->
+<!--     HDL32E   -->
+<!--   check scan topic  -->
+<node pkg= "polar_sensor_models" 		type = "polar_sensor_models_node" 	name = "polar_sensor_models_node" 	output="screen" if = "$(eval sensor_type_selected == 'HDL32E')" >
+		<param name="sensorType"  		type="string" value="HDL32E"/>
+		<param name="laserDataTopic"  	type="string" value="puck_rear/velodyne_points"/>
+		<param name="raysIncl"  		type="int" value="32"/> 				<!-- number of vertical rays  -->
+		<param name="inclMin"  			type="double" 	value="-0.535292"/> 	<!-- -30.67° lowest inclination ray (vertical)  -->
+		<param name="inclMax"  			type="double" 	value="0.186227"/>		<!-- +10.67° highest inclination ray (vertical) -->
+		<param name="inclRes"  			type="double" 	value="0.0232129"/>		<!--   1.33° inclination resolution - angle between two vertical rays -->
+		<param name="azimMin"  			type="double" 	value="0.0"/>			<!--    0.0° azimuth start angle (horizontal)   -->
+		<param name="azimMax"  			type="double" 	value="6.28319"/>		<!--  360.0° azimuth stop angle (horizontal)    -->
+		<param name="azimRes"  			type="double" 	value="0.002897"/>		<!--  0.166° azimuth resolution - angle between two horizontal rays   -->
+<!-- TODO: add firingSeq with YAML file input -->
+</node>
+
+<!-- ____________ -->
+<!--   OUSTEROS0  -->
+<!--   insert scan topic  -->
+<node pkg= "polar_sensor_models" 		type = "polar_sensor_models_node" 	name = "polar_sensor_models_node" 	output="screen" if = "$(eval sensor_type_selected == 'OUSTEROS0')" >
+		<param name="sensorType"  		type="string" value="OUSTEROS0"/>
+		<param name="laserDataTopic"  	type="string" value="insert_scan_topic_here"/>
+		<param name="raysIncl"  		type="int" value="128"/> 				<!-- number of vertical rays  -->
+		<param name="inclMin"  			type="double" 	value="-0.785398"/> 	<!-- -45.0° lowest inclination ray (vertical)  -->
+		<param name="inclMax"  			type="double" 	value="0.785398"/>		<!-- +45.0° highest inclination ray (vertical) -->
+		<param name="inclRes"  			type="double" 	value="0.012217"/>		<!--   0.7° inclination resolution - angle between two vertical rays -->
+		<param name="azimMin"  			type="double" 	value="0.0"/>			<!--   0.0° azimuth start angle (horizontal)   -->
+		<param name="azimMax"  			type="double" 	value="6.28319"/>		<!-- 360.0° azimuth stop angle (horizontal)    -->
+		<param name="azimRes"  			type="double" 	value="0.0061087"/>		<!--  0.35° azimuth resolution - angle between two horizontal rays   -->
+</node>
+
+<!-- ____________ -->
+<!--   TILT3D  -->
+<!--   insert scan topic  -->
+<node pkg= "polar_sensor_models" 		type = "polar_sensor_models_node" 	name = "polar_sensor_models_node" 	output="screen" if = "$(eval sensor_type_selected == 'TILT3D')" >
+		<param name="sensorType"  		type="string" value="TILT3D"/>
+		<param name="laserDataTopic"  	type="string" value="insert_scan_topic_here"/>
+		<param name="raysIncl"  		type="int" value="0"/> 					<!-- number of vertical rays = number of tilts = ( |_angleStart - _angleStop| ) / unit  -> check dyn reconf params of ohm_sensors/ohm_tilt_scanner_3d/cfg/ReconfigureScan.cfg -->
+		<param name="inclMin"  			type="double" 	value="0.0"/> 			<!-- xx° lowest inclination ray (vertical) -> check _angleStart -->
+		<param name="inclMax"  			type="double" 	value="0.0"/>			<!-- xx° highest inclination ray (vertical) -> check _angleStop -->
+		<param name="inclRes"  			type="double" 	value="0.0"/>			<!-- xx° inclination resolution - angle between two vertical rays -> check unit in ohm_sensors/ohm_tilt_scanner/src/TiltScannerNode.cpp -->
+		<param name="azimMin"  			type="double" 	value="0.0"/>			<!--   0.0° azimuth start angle (horizontal)   -->
+		<param name="azimMax"  			type="double" 	value="4.71239"/>		<!-- 270.0° azimuth stop angle (horizontal)    -->
+		<param name="azimRes"  			type="double" 	value="0.005760"/>		<!--  0.33° azimuth resolution - angle between two horizontal rays   -->
+</node>
+
+<!-- ____________ -->
+<!--   TILT4D  -->
+<!--   insert scan topic  -->
+<node pkg= "polar_sensor_models" 		type = "polar_sensor_models_node" 	name = "polar_sensor_models_node" 	output="screen" if = "$(eval sensor_type_selected == 'TILT4D')" >
+		<param name="sensorType"  		type="string" value="TILT4D"/>
+		<param name="laserDataTopic"  	type="string" value="insert_scan_topic_here"/>
+		<param name="raysIncl"  		type="int" value="0"/> 					<!-- number of vertical rays = number of tilts = ( |_angleStart - _angleStop| ) / unit  -> check dyn reconf params of ohm_sensors/ohm_tilt_scanner_3d/cfg/ReconfigureScan.cfg -->
+		<param name="inclMin"  			type="double" 	value="0.0"/> 			<!-- xx° lowest inclination ray (vertical) -> check _angleStart -->
+		<param name="inclMax"  			type="double" 	value="0.0"/>			<!-- xx° highest inclination ray (vertical) -> check _angleStop -->
+		<param name="inclRes"  			type="double" 	value="0.0"/>			<!-- xx° inclination resolution - angle between two vertical rays -> check unit in ohm_sensors/ohm_tilt_scanner/src/TiltScannerNode.cpp -->
+		<param name="azimMin"  			type="double" 	value="0.0"/>			<!--   0.0° azimuth start angle (horizontal)   -->
+		<param name="azimMax"  			type="double" 	value="4.71239"/>		<!-- 270.0° azimuth stop angle (horizontal)    -->
+		<param name="azimRes"  			type="double" 	value="0.005760"/>		<!--  0.33° azimuth resolution - angle between two horizontal rays   -->
+</node>
+
+
 </launch>
+
+<!-- _________________________________________________________________________________ -->
+<!--  ADDING A NEW SENSOR -->
+<!--  1) check firing sequence. Does sensor fire all inclination rays "in order" from  -->
+<!--     lowest incl angle (inclMin) to largest incl angle (inclMax) in inclRes steps? -->
+<!--	 if yes: _firingSeq vector not necessary. Just add sensor like OUSTEROS0 with  -->
+<!--             with all the params you see above.									   -->
+<!--	 if no: check data sheet of sensor to find out about firing sequence of lasers -->
+<!--	        you can see examples for VLP16 + HDL32E in PolarSensors::init()        -->
+<!--			also: check PolarSensor.h comment @ _firingSeq for further details	   -->
+<!--  2) add "else if" segment for your sensor in PolarSensors::init()				   -->
+<!--  3) adding a tilting sensor?													   -->
+<!--	 you probably need to add a sorting routine if the tilting will create 		   -->
+<!--     multiple measurements for a single point. Sort them and compute an average    -->
+<!--     distance for each vertical ray. Your maximum number of measurement must not   -->
+<!--     exceed the total number of laser rays = raysIncl * raysAzim when you call the -->
+<!--     function _sensor->setRealMeasurementData and _sensor->push. This is also      -->
+<!--     called _size in class SensorPolar and also used in parent class Sensor. 	   -->
+<!--  4) add sensor_type_selected in the top of this launch file					   -->
+<!--     <arg name = "sensor_type_selected" default = "YOURSENSORNAME" />    		   -->
+<!--  5) add node in this launch file with if(eval) statement and all params		   -->
+<!--	 if = "$(eval sensor_type_selected == 'YOURSENSORNAME')						   -->
