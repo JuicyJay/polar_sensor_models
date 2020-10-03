@@ -16,6 +16,8 @@ PolarSensors::PolarSensors(const float dimX, const float dimY, const float dimZ,
   // launchfile parameters, default vals for VLP16
   _prvnh.param<std::string>("sensorType", _sensorType, "VLP16");
   _prvnh.param<std::string>("laserDataTopic", _laserDataTopic, "puck_rear/velodyne_points");
+  _prvnh.param<std::string>("tfMyFrameID", _tfMyFrameID, "map");
+  _prvnh.param<std::string>("tfCallbackFrameID", _tfCallbackFrameID, "puck_rear");
   _prvnh.param<int>("raysIncl", _raysIncl, 16);
   _prvnh.param<double>("inclMin", _inclMin, -0.26180); //-15°
   _prvnh.param<double>("inclMax", _inclMax, 0.26180);  //+15°
@@ -26,6 +28,9 @@ PolarSensors::PolarSensors(const float dimX, const float dimY, const float dimZ,
 
   std::cout << __PRETTY_FUNCTION__ << " LAUNCH CHECK " << std::endl;
   std::cout << "sensorType = " << _sensorType << std::endl;
+  std::cout << "laserDataTopic = " << _laserDataTopic << std::endl;
+  std::cout << "tfMyFrameID = " << _tfMyFrameID << std::endl;
+  std::cout << "tfCallbackFrameID = " << _tfCallbackFrameID << std::endl;
   std::cout << "raysIncl = " << _raysIncl << std::endl;
   std::cout << "inclMin = " << _inclMin << " = " << RAD2DEG(_inclMin) << "°" << std::endl;
   std::cout << "inclMax = " << _inclMax << " = " << RAD2DEG(_inclMax) << "°" << std::endl;
@@ -34,12 +39,12 @@ PolarSensors::PolarSensors(const float dimX, const float dimY, const float dimZ,
   std::cout << "azimMax = " << _azimMax << " = " << RAD2DEG(_azimMax) << "°" << std::endl;
   std::cout << "azimRes = " << _azimRes << " = " << RAD2DEG(_azimRes) << "°" << std::endl;
 
-  _subPointcloud       = _nh.subscribe(_laserDataTopic, 1, &PolarSensors::callbackPointcloud, this);
-  _pubAxisAlignedCloud = _nh.advertise<pcl::PointCloud<pcl::PointXYZRGBNormal> >("axisAlignedCloud", 1);
-  _tfActive            = false;
-  _virginPush          = false;
-  _tfMyFrameID         = "map";
-  _tfCallbackFrameID   = "ground_truth"; // for gazebo bags, change this
+  _subPointcloud         = _nh.subscribe(_laserDataTopic, 1, &PolarSensors::callbackPointcloud, this);
+  _pubAxisAlignedCloud   = _nh.advertise<pcl::PointCloud<pcl::PointXYZRGBNormal> >("axisAlignedCloud", 1);
+  _pubRedBlueRendered    = _nh.advertise<pcl::PointCloud<pcl::PointXYZRGB> >("redBlueRendered_space", 1);
+  _pubSensorRaycastCloud = _nh.advertise<pcl::PointCloud<pcl::PointXYZ> >("sensorRaycastCloud", 1);
+  _tfActive              = false;
+  _virginPush            = false;
 }
 
 PolarSensors::~PolarSensors() {}

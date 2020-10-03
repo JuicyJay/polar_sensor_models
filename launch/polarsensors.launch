@@ -5,11 +5,11 @@
 <!--  CHANGE THIS DEPENDING ON WHICH SENSOR YOU WANT TO USE (UNCOMMENT THE ONE U NEED) -->
 <!--                      wanna add a new sensor? pls check below                      -->
 
-<!-- <arg name = "sensor_type_selected" default = "VLP16" /> -->
+<arg name = "sensor_type_selected" default = "VLP16" />
 <!-- <arg name = "sensor_type_selected" default = "HDL32E" /> -->
 <!-- <arg name = "sensor_type_selected" default = "OUSTEROS0" /> -->
 <!-- <arg name = "sensor_type_selected" default = "TILT3D" /> -->
-<arg name = "sensor_type_selected" default = "TILT4D" />
+<!-- <arg name = "sensor_type_selected" default = "TILT4D" /> -->
 
 <!-- ____________ -->
 <!--     VLP16    -->
@@ -17,6 +17,8 @@
 <node pkg= "polar_sensor_models" 		type = "polar_sensor_models_node" 	name = "polar_sensor_models_node" 	output="screen" if = "$(eval sensor_type_selected == 'VLP16')" >
 		<param name="sensorType"  		type="string" value="VLP16"/>
 		<param name="laserDataTopic"  	type="string" value="puck_rear/velodyne_points"/>
+		<param name="tfMyFrameID"  		type="string" value="map"/>
+		<param name="tfCallbackFrameID" type="string" value="puck_rear"/>
 		<param name="raysIncl"  		type="int" value="16"/> 				<!-- number of vertical rays  -->
 		<param name="inclMin"  			type="double" 	value="-0.26180"/> 		<!-- -15.0° lowest inclination ray (vertical)  -->
 		<param name="inclMax"  			type="double" 	value="0.26180"/>		<!-- +15.0° highest inclination ray (vertical) -->
@@ -33,6 +35,8 @@
 <node pkg= "polar_sensor_models" 		type = "polar_sensor_models_node" 	name = "polar_sensor_models_node" 	output="screen" if = "$(eval sensor_type_selected == 'HDL32E')" >
 		<param name="sensorType"  		type="string" value="HDL32E"/>
 		<param name="laserDataTopic"  	type="string" value="puck_rear/velodyne_points"/>
+		<param name="tfMyFrameID"  		type="string" value="map"/>
+		<param name="tfCallbackFrameID" type="string" value="puck_rear"/>
 		<param name="raysIncl"  		type="int" value="32"/> 				<!-- number of vertical rays  -->
 		<param name="inclMin"  			type="double" 	value="-0.535292"/> 	<!-- -30.67° lowest inclination ray (vertical)  -->
 		<param name="inclMax"  			type="double" 	value="0.186227"/>		<!-- +10.67° highest inclination ray (vertical) -->
@@ -49,6 +53,8 @@
 <node pkg= "polar_sensor_models" 		type = "polar_sensor_models_node" 	name = "polar_sensor_models_node" 	output="screen" if = "$(eval sensor_type_selected == 'OUSTEROS0')" >
 		<param name="sensorType"  		type="string" value="OUSTEROS0"/>
 		<param name="laserDataTopic"  	type="string" value="insert_scan_topic_here"/>
+		<param name="tfMyFrameID"  		type="string" value="map"/>
+		<param name="tfCallbackFrameID" type="string" value="puck_rear"/>
 		<param name="raysIncl"  		type="int" value="128"/> 				<!-- number of vertical rays  -->
 		<param name="inclMin"  			type="double" 	value="-0.785398"/> 	<!-- -45.0° lowest inclination ray (vertical)  -->
 		<param name="inclMax"  			type="double" 	value="0.785398"/>		<!-- +45.0° highest inclination ray (vertical) -->
@@ -64,6 +70,8 @@
 <node pkg= "polar_sensor_models" 		type = "polar_sensor_models_node" 	name = "polar_sensor_models_node" 	output="screen" if = "$(eval sensor_type_selected == 'TILT3D')" >
 		<param name="sensorType"  		type="string" value="TILT3D"/>
 		<param name="laserDataTopic"  	type="string" value="insert_scan_topic_here"/>
+		<param name="tfMyFrameID"  		type="string" value="map"/>
+		<param name="tfCallbackFrameID" type="string" value="puck_rear"/>
 		<param name="raysIncl"  		type="int" value="0"/> 					<!-- number of vertical rays = number of tilts = ( |_angleStart - _angleStop| ) / unit  -> check dyn reconf params of ohm_sensors/ohm_tilt_scanner_3d/cfg/ReconfigureScan.cfg -->
 		<param name="inclMin"  			type="double" 	value="0.0"/> 			<!-- xx° lowest inclination ray (vertical) -> check _angleStart -->
 		<param name="inclMax"  			type="double" 	value="0.0"/>			<!-- xx° highest inclination ray (vertical) -> check _angleStop -->
@@ -79,6 +87,8 @@
 <node pkg= "polar_sensor_models" 		type = "polar_sensor_models_node" 	name = "polar_sensor_models_node" 	output="screen" if = "$(eval sensor_type_selected == 'TILT4D')" >
 		<param name="sensorType"  		type="string" value="TILT4D"/>
 		<param name="laserDataTopic"  	type="string" value="insert_scan_topic_here"/>
+		<param name="tfMyFrameID"  		type="string" value="map"/>
+		<param name="tfCallbackFrameID" type="string" value="puck_rear"/>
 		<param name="raysIncl"  		type="int" value="0"/> 					<!-- number of vertical rays = number of tilts = ( |_angleStart - _angleStop| ) / unit  -> check dyn reconf params of ohm_sensors/ohm_tilt_scanner_3d/cfg/ReconfigureScan.cfg -->
 		<param name="inclMin"  			type="double" 	value="0.0"/> 			<!-- xx° lowest inclination ray (vertical) -> check _angleStart -->
 		<param name="inclMax"  			type="double" 	value="0.0"/>			<!-- xx° highest inclination ray (vertical) -> check _angleStop -->
