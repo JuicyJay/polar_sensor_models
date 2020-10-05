@@ -258,8 +258,8 @@ void PolarSensors::pubSensorRaycast(pcl::PointCloud<pcl::PointXYZ>& cloud)
 
 void PolarSensors::callbackPointcloud(const pcl::PointCloud<pcl::PointXYZ>& cloud)
 {
-  // if(!_sensor || !_space) // if neither sensor nor space have been initialized yet -> do so in init routine
-  if(!_space) // if space hasn't been initialized yet -> do so in init routine
+  if(!_sensor || !_space) // if neither sensor nor space have been initialized yet -> do so in init routine
+                          // if(!_space) // if space hasn't been initialized yet -> do so in init routine
     this->init(cloud);
 
   if(_tfActive) // transform sensor
