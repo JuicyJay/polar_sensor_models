@@ -44,6 +44,7 @@ private:
 
   int              _raysIncl;
   std::string      _sensorType;
+  bool             _artificialData;
   std::string      _laserDataTopic;
   double           _inclMin;
   double           _inclMax;

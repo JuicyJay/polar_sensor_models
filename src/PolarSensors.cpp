@@ -15,6 +15,7 @@ PolarSensors::PolarSensors(const float dimX, const float dimY, const float dimZ,
 {
   // launchfile parameters, default vals for VLP16
   _prvnh.param<std::string>("sensorType", _sensorType, "VLP16");
+  _prvnh.param<bool>("artificialData", _artificialData, "true");
   _prvnh.param<std::string>("laserDataTopic", _laserDataTopic, "puck_rear/velodyne_points");
   _prvnh.param<std::string>("tfMyFrameID", _tfMyFrameID, "map");
   _prvnh.param<std::string>("tfCallbackFrameID", _tfCallbackFrameID, "puck_rear");
@@ -28,6 +29,7 @@ PolarSensors::PolarSensors(const float dimX, const float dimY, const float dimZ,
 
   std::cout << __PRETTY_FUNCTION__ << " LAUNCH CHECK " << std::endl;
   std::cout << "sensorType = " << _sensorType << std::endl;
+  std::cout << "artificialData = " << _artificialData << std::endl;
   std::cout << "laserDataTopic = " << _laserDataTopic << std::endl;
   std::cout << "tfMyFrameID = " << _tfMyFrameID << std::endl;
   std::cout << "tfCallbackFrameID = " << _tfCallbackFrameID << std::endl;
@@ -93,8 +95,9 @@ void PolarSensors::init(const pcl::PointCloud<pcl::PointXYZ>& cloud)
   }
   else
   {
-    std::cout << __PRETTY_FUNCTION__ << "invalid sensorType. Please check launchfile. Wanna add a new sensor? pls add it to polarsensors.launch and "
-                                        "initialize it here. More detailed info on how to add a new sensor in polarsensors.launch"
+    std::cout << __PRETTY_FUNCTION__
+              << "invalid sensorType. Please check launchfile. Wanna add a new sensor? pls add it to polarsensors.launch and "
+                 "initialize it here. More detailed info on how to add a new sensor in polarsensors.launch"
               << std::endl;
   }
 
@@ -155,11 +158,11 @@ void PolarSensors::redBlueRenderSpace(pcl::PointCloud<pcl::PointXYZRGB>& cloud)
   {
     Color(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
     Color() : r(0), g(0), b(0) {}
-    void red(uint8_t val) { r = val; }
-    void blue(uint8_t val) { b = val; }
-    uint8_t           r;
-    uint8_t           g;
-    uint8_t           b;
+    void    red(uint8_t val) { r = val; }
+    void    blue(uint8_t val) { b = val; }
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
   };
 
   obvious::Matrix*   cellCoordsHom = obvious::TsdSpacePartition::getCellCoordsHom();
@@ -316,40 +319,51 @@ void PolarSensors::callbackPointcloud(const pcl::PointCloud<pcl::PointXYZ>& clou
         Eigen::Vector3f point(cloud.points[idx].x, cloud.points[idx].y, cloud.points[idx].z);
         double          abs;
 
-        if(_sensorType == "OUSTEROS0")
-        {
-          // call sort function if needed. Ouster tech support said that each measurement carries a ring parameter which specifies the vertical index
-          // check out in which order data is sorted and then push measurement rays in order from inclMin = -45° to inclMax = 45° into vector depthData
-          // in this way, no lookupIndex function is needed
-        }
-        else if(_sensorType == "TILT3D")
-        {
-          // probably not necessary since tilt3d software looks like scans are already collected in the correct order
-          // since tilt3d works with SICK TIM571 which is a 2D LIDAR, there won't be multiple measurements per inclination ray
-          // just delete this statement so that for TILT3D also the "else" condition applies
-          // if sorting is needed: add a method for sorting like in tilt4d
-        }
-        else if(_sensorType == "TILT4D")
-        {
-          // problem here: tilt4d tilts the 16 vertical rays of VLP16 and this results in more measurements per inclination position/ray
-          // implement a sort function that sorts each measurement in a bucket, compute average of each bucket so the result is one single measurement
-          // per inclination ray. The total number of inclination depth measurements must not exceed the number of inclination rays which can be determined
-          // by calulating |inclMin - inclMax| / inclRes
-
-          pcl::PointCloud<pcl::PointXYZ> sortedCloud;
-          this->sortPointcloudTilt4d(&cloud, &sortedCloud);
-          Eigen::Vector3f sortedPoint(sortedCloud.points[idx].x, sortedCloud.points[idx].y, sortedCloud.points[idx].z);
-          abs = static_cast<double>(sortedPoint.norm());
-        }
-        else // fill in depthData in order of scan pointcloud. this is currently done for VLP16 and HDL32E because SensorPolar implements a lookupIndex
-             // function for these two which takes care of the sorting with help of the firing sequence specified in _firingSeq
+        if(_artificialData)
         {
           abs = static_cast<double>(point.norm());
         }
+        else // real laser data
+        {
+          if(_sensorType == "TILT3D")
+          {
+            // probably not necessary since tilt3d software looks like scans are already collected in the correct order
+            // since tilt3d works with SICK TIM571 which is a 2D LIDAR, there won't be multiple measurements per inclination ray
+            // just delete this statement so that for TILT3D also the "else" condition applies
+            // if sorting is needed: add a method for sorting like in tilt4d
+          }
+          else if(_sensorType == "TILT4D")
+          {
+            // problem here: tilt4d tilts the 16 vertical rays of VLP16 and this results in more measurements per inclination position/ray
+            // implement a sort function that sorts each measurement in a bucket, compute average of each bucket so the result is one single measurement
+            // per inclination ray. The total number of inclination depth measurements must not exceed the number of inclination rays which can be determined
+            // by calulating |inclMin - inclMax| / inclRes
 
+            pcl::PointCloud<pcl::PointXYZ> sortedCloud;
+            this->sortPointcloudTilt4d(&cloud, &sortedCloud);
+            Eigen::Vector3f sortedPoint(sortedCloud.points[idx].x, sortedCloud.points[idx].y, sortedCloud.points[idx].z);
+            abs = static_cast<double>(sortedPoint.norm());
+          }
+          // else if(_sensorType == "OUSTEROS0")
+          // {
+          //   // call sort function if needed. Ouster tech support said that each measurement carries a ring parameter which specifies the vertical index
+          //   // check out in which order data is sorted and then push measurement rays in order from inclMin = -45° to inclMax = 45° into vector depthData
+          //   // in this way, no lookupIndex function is needed
+          // }
+          else // fill in depthData in order of scan pointcloud. always done for artificial data. this can also always be done for VLP16 and HDL32E because
+               // SensorPolar implements a lookupIndex function for these two which takes care of the sorting with help of the firing sequence specified in
+               // _firingSeq
+          {
+            abs = static_cast<double>(point.norm());
+          }
+        }
+
+        // continue for all cases
         if(abs > 0.0)
         {
           depthData[idx] = abs;
+          // depthData[idx] = 2.0;
+
           mask[idx]      = true;
           valid++;
         }
@@ -367,10 +381,15 @@ void PolarSensors::callbackPointcloud(const pcl::PointCloud<pcl::PointXYZ>& clou
     }
     std::cout << __PRETTY_FUNCTION__ << " pushing " << valid << " valid points " << std::endl;
     _sensor->setRealMeasurementData(depthData.data());
+    std::cout << __PRETTY_FUNCTION__ << " ouch " << std::endl;
+
     _sensor->setRealMeasurementMask(mask);
+    std::cout << __PRETTY_FUNCTION__ << " uhh " << std::endl;
 
     delete mask;
     _space->push(_sensor.get());
+    std::cout << __PRETTY_FUNCTION__ << " ayayay " << std::endl;
+
     _virginPush = true;
   }
   else
