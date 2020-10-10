@@ -6,10 +6,10 @@
 <!--                      wanna add a new sensor? pls check below                      -->
 
 <!-- <arg name = "sensor_type_selected" default = "VLP16" /> -->
-<!-- <arg name = "sensor_type_selected" default = "HDL32E" /> -->
+<arg name = "sensor_type_selected" default = "HDL32E" />
 <!-- <arg name = "sensor_type_selected" default = "OUSTEROS0" /> -->
 <!-- <arg name = "sensor_type_selected" default = "TILT3D" /> -->
-<arg name = "sensor_type_selected" default = "TILT4D" />
+<!-- <arg name = "sensor_type_selected" default = "TILT4D" /> -->
 
 <!-- ____________ -->
 <!--     VLP16    -->
@@ -36,16 +36,20 @@
 <node pkg= "polar_sensor_models" 		type = "polar_sensor_models_node" 	name = "polar_sensor_models_node" 	output="screen" if = "$(eval sensor_type_selected == 'HDL32E')" >
 		<param name="sensorType"  		type="string" value="HDL32E"/>
 		<param name="artificialData"  	type="bool" value="true"/>
-		<param name="laserDataTopic"  	type="string" value="puck_rear/velodyne_points"/>
+		<!-- <param name="laserDataTopic"  	type="string" value="puck_rear/velodyne_points"/> -->
+		<param name="laserDataTopic"  	type="string" value="velodyne_points"/>
 		<param name="tfMyFrameID"  		type="string" value="map"/>
-		<param name="tfCallbackFrameID" type="string" value="puck_rear"/>
+		<!-- <param name="tfCallbackFrameID" type="string" value="puck_rear"/> -->
+		<param name="tfCallbackFrameID" type="string" value="velodyne"/>
 		<param name="raysIncl"  		type="int" value="32"/> 				<!-- number of vertical rays  -->
 		<param name="inclMin"  			type="double" 	value="-0.535292"/> 	<!-- -30.67° lowest inclination ray (vertical)  -->
 		<param name="inclMax"  			type="double" 	value="0.186227"/>		<!-- +10.67° highest inclination ray (vertical) -->
 		<param name="inclRes"  			type="double" 	value="0.0232129"/>		<!--   1.33° inclination resolution - angle between two vertical rays -->
 		<param name="azimMin"  			type="double" 	value="0.0"/>			<!--    0.0° azimuth start angle (horizontal)   -->
 		<param name="azimMax"  			type="double" 	value="6.28319"/>		<!--  360.0° azimuth stop angle (horizontal)    -->
-		<param name="azimRes"  			type="double" 	value="0.002897"/>		<!--  0.166° azimuth resolution - angle between two horizontal rays   -->
+	<!--	<param name="azimRes"  			type="double" 	value="0.002897"/>	 0.166° azimuth resolution - angle between two horizontal rays -->  
+		<param name="azimRes"  			type="double" 	value="0.0028921"/>		<!--  azimRes neu   -->
+		<!-- <param name="azimRes"  			type="double" 	value="0.007"/> so wird laserscan resolution in 32e_points.launch gesetzt -->
 <!-- TODO: add firingSeq with YAML file input -->
 </node>
 
