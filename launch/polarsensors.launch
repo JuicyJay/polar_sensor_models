@@ -38,7 +38,7 @@
 		<param name="artificialData"  	type="bool" value="true"/>
 		<!-- <param name="laserDataTopic"  	type="string" value="puck_rear/velodyne_points"/> -->
 		<param name="laserDataTopic"  	type="string" value="velodyne_points"/>
-		<param name="tfMyFrameID"  		type="string" value="map"/>
+		<param name="tfMyFrameID"  		type="string" value="velodyne"/>
 		<!-- <param name="tfCallbackFrameID" type="string" value="puck_rear"/> -->
 		<param name="tfCallbackFrameID" type="string" value="velodyne"/>
 		<param name="raysIncl"  		type="int" value="32"/> 				<!-- number of vertical rays  -->
@@ -48,7 +48,7 @@
 		<param name="azimMin"  			type="double" 	value="0.0"/>			<!--    0.0° azimuth start angle (horizontal)   -->
 		<param name="azimMax"  			type="double" 	value="6.28319"/>		<!--  360.0° azimuth stop angle (horizontal)    -->
 	<!--	<param name="azimRes"  			type="double" 	value="0.002897"/>	 0.166° azimuth resolution - angle between two horizontal rays -->  
-		<param name="azimRes"  			type="double" 	value="0.0028921"/>		<!--  azimRes neu   -->
+		<param name="azimRes"  			type="double" 	value="0.0028923"/>		<!--  azimRes neu   -->
 		<!-- <param name="azimRes"  			type="double" 	value="0.007"/> so wird laserscan resolution in 32e_points.launch gesetzt -->
 <!-- TODO: add firingSeq with YAML file input -->
 </node>

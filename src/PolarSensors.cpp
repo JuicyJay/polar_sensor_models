@@ -9,6 +9,22 @@
 #include "obvision/reconstruct/space/RayCast3D.h"
 #include "obvision/reconstruct/space/RayCastAxisAligned3D.h"
 
+/**
+   * @function rad
+   * @brief degree to rad conversion
+   * @param deg degree value
+   * @return rad rad value
+   **/
+static inline double deg2rad(const double deg) { return ((M_PI * deg) / 180.0); }
+
+/**
+ * @function deg
+ * @brief rad to degree conversion
+ * @param rad rad value
+ * @return deg degree value
+ **/
+static inline double rad2deg(const double rad) { return ((rad * 180.0) / M_PI); }
+
 PolarSensors::PolarSensors(const float dimX, const float dimY, const float dimZ, const float cellSize)
     : _nh(), _prvnh("~"), _dimX(dimX), _dimY(dimY), _dimZ(dimZ), _cellSize(cellSize), /**_listener(std::make_unique<tf::TransformListener>()),**/ _cellsX(0),
       _cellsY(0), _cellsZ(0)
@@ -95,9 +111,8 @@ void PolarSensors::init(const pcl::PointCloud<pcl::PointXYZ>& cloud)
   }
   else
   {
-    std::cout << __PRETTY_FUNCTION__
-              << "invalid sensorType. Please check launchfile. Wanna add a new sensor? pls add it to polarsensors.launch and "
-                 "initialize it here. More detailed info on how to add a new sensor in polarsensors.launch"
+    std::cout << __PRETTY_FUNCTION__ << "invalid sensorType. Please check launchfile. Wanna add a new sensor? pls add it to polarsensors.launch and "
+                                        "initialize it here. More detailed info on how to add a new sensor in polarsensors.launch"
               << std::endl;
   }
 
@@ -158,11 +173,11 @@ void PolarSensors::redBlueRenderSpace(pcl::PointCloud<pcl::PointXYZRGB>& cloud)
   {
     Color(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
     Color() : r(0), g(0), b(0) {}
-    void    red(uint8_t val) { r = val; }
-    void    blue(uint8_t val) { b = val; }
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
+    void red(uint8_t val) { r = val; }
+    void blue(uint8_t val) { b = val; }
+    uint8_t           r;
+    uint8_t           g;
+    uint8_t           b;
   };
 
   obvious::Matrix*   cellCoordsHom = obvious::TsdSpacePartition::getCellCoordsHom();
@@ -319,6 +334,30 @@ void PolarSensors::callbackPointcloud(const pcl::PointCloud<pcl::PointXYZ>& clou
         Eigen::Vector3f point(cloud.points[idx].x, cloud.points[idx].y, cloud.points[idx].z);
         double          abs;
 
+        // azim u incl winkel durchgehen, um firing sequence zu überprüfen
+
+        // double inclAngle = 0.0;
+        // double length =
+        //     sqrt(cloud.points[idx].x * cloud.points[idx].x + cloud.points[idx].y * cloud.points[idx].y + cloud.points[idx].z * cloud.points[idx].z);
+        // double lengthInv = 1.0 / length;
+        // double theta     = acos(cloud.points[idx].z * lengthInv);
+        // if(theta >= deg2rad(90.0))
+        // {
+        //   inclAngle = -(theta - deg2rad(90.0));
+        // }
+        // else
+        // {
+        //   inclAngle = deg2rad(90.0) - theta;
+        // }
+        // double azimAngle = atan2(cloud.points[idx].y, cloud.points[idx].x) + M_PI;
+
+        // std::cout << __PRETTY_FUNCTION__ << "idx = " << idx << ", theta = " << theta << ", inclAngle = " << rad2deg(inclAngle)
+        //           << ", azimAngle = " << rad2deg(azimAngle) << std::endl;
+        // if(idx == 500)
+        // {
+        //   std::abort();
+        // }
+
         if(_artificialData)
         {
           abs = static_cast<double>(point.norm());
@@ -358,19 +397,29 @@ void PolarSensors::callbackPointcloud(const pcl::PointCloud<pcl::PointXYZ>& clou
           }
         }
 
-        // continue for all cases
-        if(abs > 0.0)
+        // HIER DIE AUSSORTIERUNG RAUSGENOMMEN
+        // // continue for all cases
+        if(isnan(abs))
+        {
+          mask[idx] = false;
+        }
+        else if(abs > 0.0)
         {
           depthData[idx] = abs;
           // depthData[idx] = 2.0;
-
-          mask[idx]      = true;
+          mask[idx] = true;
           valid++;
         }
         else
         {
           mask[idx] = false;
         }
+
+        //
+        // ALLE WERTE ÜBERNEHMEN, NICHT AUSSORTIEREN
+        // depthData[idx] = abs;
+        // mask[idx]      = true;
+        // valid++;
       }
     }
 
