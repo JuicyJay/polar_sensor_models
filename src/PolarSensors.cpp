@@ -334,7 +334,7 @@ void PolarSensors::callbackPointcloud(const pcl::PointCloud<pcl::PointXYZ>& clou
         Eigen::Vector3f point(cloud.points[idx].x, cloud.points[idx].y, cloud.points[idx].z);
         double          abs;
 
-        // azim u incl winkel durchgehen, um firing sequence zu überprüfen
+        // DEBUG: azim u incl winkel durchgehen, um firing sequence zu überprüfen
 
         // double inclAngle = 0.0;
         // double length =
@@ -414,12 +414,6 @@ void PolarSensors::callbackPointcloud(const pcl::PointCloud<pcl::PointXYZ>& clou
         {
           mask[idx] = false;
         }
-
-        //
-        // ALLE WERTE ÜBERNEHMEN, NICHT AUSSORTIEREN
-        // depthData[idx] = abs;
-        // mask[idx]      = true;
-        // valid++;
       }
     }
 
