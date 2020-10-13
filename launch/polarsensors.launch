@@ -82,7 +82,7 @@
 		<param name="tfCallbackFrameID" type="string" value="puck_rear"/>
 		<param name="raysIncl"  		type="int" value="90"/> 					<!-- number of vertical rays = number of tilts = ( |_angleStart - _angleStop| ) / unit  -> check dyn reconf params of ohm_sensors/ohm_tilt_scanner_3d/cfg/ReconfigureScan.cfg -->
 		<param name="inclMin"  			type="double" 	value="0.0"/> 			<!-- xx° lowest inclination ray (vertical) -> check _angleStart -->
-		<param name="inclMax"  			type="double" 	value="1.5708"/>			<!-- xx° highest inclination ray (vertical) -> check _angleStop -->
+		<param name="inclMax"  			type="double" 	value="1.570796327"/>			<!-- xx° highest inclination ray (vertical) -> check _angleStop -->
 		<param name="inclRes"  			type="double" 	value="0.0174533"/>			<!-- xx° inclination resolution - angle between two vertical rays -> check unit in ohm_sensors/ohm_tilt_scanner/src/TiltScannerNode.cpp -->
 		<param name="azimMin"  			type="double" 	value="-2.35619"/>			<!--   -135° azimuth start angle (horizontal)   -->
 		<param name="azimMax"  			type="double" 	value="2.35619"/>		<!-- +135° azimuth stop angle (horizontal)    -->
